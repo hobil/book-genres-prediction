@@ -2,3 +2,4 @@ gensim
 sklearn
 matplotlib
 pandas
+requests
