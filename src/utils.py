@@ -3,10 +3,66 @@ import requests
 import io
 import zipfile
 import pickle
+import numpy as np
 import pandas as pd
 import gensim
 import logging
 import random
+
+import os
+import pickle
+import numpy as np
+
+
+def pickle_partial(obj, filename, parts=1):
+    """
+    Splits a list or numpy array into given number of parts
+    and pickles each of them separately.
+    The filename must end with '.pkl'
+    """
+    if parts == 1:
+        pickle.dump(obj, open(filename, 'wb'))
+    else:
+        filename_base = filename.split('.')[0]
+        n = len(obj)
+        part_size = int(np.ceil(n / parts))
+        logging.debug('part_size: {}'.format(part_size))
+        for part in range(parts):
+            filename_part = '{}_{}.pkl'.format(filename_base, part)
+            pickle.dump(obj[part * part_size : (part + 1) * part_size], open(filename_part, 'wb'))
+
+
+def unpickle(filename):
+    """
+    Look for a file with the specified name.
+    If it is not found, load files with names in format 'filename_i.pkl'
+    starting with i=0 and increment i as long as the corresponding file exists.
+    Filename must end with '.pkl'
+    """
+    if os.path.exists(filename):
+        logging.debug('{} found'.format(filename))
+        return pickle.load(open(filename,'rb'))
+    else:
+        filename_base = ".".join(filename.split('.')[:-1]) # part before '.pkl'
+        part = 0
+        result = None
+        obj_type = None
+        while True:
+            filename_part = '{}_{}.pkl'.format(filename_base, part)
+            if not os.path.exists(filename_part):
+                logging.debug('{} not found, stopping'.format(filename_part))
+                break
+            logging.debug('loading {}'.format(filename_part))
+            obj = pickle.load(open(filename_part,'rb'))
+            if obj_type is None:
+                obj_type = type(obj)
+                result = obj
+            elif isinstance(obj, list):
+                result.extend(obj)
+            else:
+                result = np.append(result, obj)
+            part += 1
+        return result
 
 def load_catalog():
     """
