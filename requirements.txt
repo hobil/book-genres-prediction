@@ -3,3 +3,6 @@ sklearn
 matplotlib
 pandas
 requests
+seaborn
+tensorflow
+keras

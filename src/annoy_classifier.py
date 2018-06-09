@@ -110,7 +110,7 @@ class AnnoyClassifier(AbstractAnnoyClassifier):
             [type] -- [description]
 
         """
-        return [self.single_predict(v, n_nearest).index[0] for v in X_test]
+        return [self.single_predict(v, n_nearest) for v in X_test]
 
     def predict_probas(self, X_test, n_nearest=10):
         """[summary].
