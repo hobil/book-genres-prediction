@@ -31,13 +31,13 @@ class AbstractAnnoyClassifier:
 class AnnoyClassifier(AbstractAnnoyClassifier):
     """Does not store the doc2vec model. Expects already vectors in X_test."""
 
-    def __init__(self, doc2vec_model, document_ids, ids2class, n_trees=100):
+    def __init__(self, doc2vec_model, document_ids, ids2class, metric='angular', n_trees=100):
         self.document_ids = document_ids
         self.ids2class = ids2class
         self.n_trees = n_trees
 
         self.dim = doc2vec_model.vector_size
-        self.annoy_index = AnnoyIndex(self.dim)
+        self.annoy_index = AnnoyIndex(self.dim, metric=metric)
         # for some reason there is a KeyError at the end of the enumeration
         try:
             for i, vec in enumerate(doc2vec_model.docvecs):
