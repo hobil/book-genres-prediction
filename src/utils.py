@@ -78,9 +78,9 @@ def load_snippets(doc_size=200, word_tokenized=False):
     y_test = test_genres.columns[np.argmax(test_genres.values,axis=1)]
     
     if word_tokenized:
-        texts = unpickle('../res/documents_{}_word_tokenize_tokens.pkl'.format(snippet_length))
+        texts = unpickle('../res/documents_{}_word_tokenize_tokens.pkl'.format(doc_size))
     else:
-        texts = unpickle('../res/documents_{}_simple_tokens.pkl'.format(snippet_length))
+        texts = unpickle('../res/documents_{}_simple_tokens.pkl'.format(doc_size))
     texts = np.array(texts)
     
     if doc_size == 3200:
