@@ -83,7 +83,7 @@ def load_snippets(doc_size=200, word_tokenized=False):
         texts = unpickle('../res/documents_{}_simple_tokens.pkl'.format(snippet_length))
     texts = np.array(texts)
     
-    if snippet_length == 3200:
+    if doc_size == 3200:
         ids = np.array(genres_ids)
     else:
         ids = np.array(ids)
