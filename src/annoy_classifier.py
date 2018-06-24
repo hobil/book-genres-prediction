@@ -64,7 +64,9 @@ class AnnoyClassifier(AbstractAnnoyClassifier):
         pickle.dump(attr, open(attr_filename, 'wb'))
 
     def single_predict(self, vec, n_nearest, weights='uniform'):
-        most_sim_ind = self.annoy_index.get_nns_by_vector(vec, n_nearest)
+        most_sim_ind, dists = self.annoy_index.get_nns_by_vector(vec,
+                                                                n_nearest,
+                                                                include_distances=True)
         most_similar_doc_ids = [self.document_ids[x] for x in most_sim_ind]
         classes = self.ids2class.loc[most_similar_doc_ids]
 
@@ -76,12 +78,17 @@ class AnnoyClassifier(AbstractAnnoyClassifier):
             w = 1 / (np.array(np.arange(n_nearest) + 1)).reshape(-1, 1)
         elif weights == "logarithmic":
             w = np.log(np.arange(1, n_nearest + 1) + 1).reshape(-1, 1)
-
+        elif weights == 'distances_squared':
+            w = np.array(1 / np.array(dists)**2).reshape(-1,1)
+        elif weights == 'distances_linear':
+            w = np.array(1 / np.array(dists)).reshape(-1,1)
         class_similarity = (w * classes).sum().sort_values(ascending=False)
         logging.debug(class_similarity)
         return class_similarity.index[0]
 
     def single_predict_proba(self, vec, n_nearest):
+        """deprecated, doesn't support weighting"""
+
         most_sim_ind = self.annoy_index.get_nns_by_vector(vec, n_nearest)
         most_similar_doc_ids = [self.document_ids[x] for x in most_sim_ind]
         return self.ids2class.loc[most_similar_doc_ids].mean().\
