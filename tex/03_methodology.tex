@@ -1,0 +1,81 @@
+\chapter{Methodology}
+In this chapter, we introduce the conducted experiment. After describing the dataset creation, we go into detail on the particular usage of text representation techniques and classification algorithms introduced in \cref{text_analysis} and \cref{classification_algorithms}.
+
+\section{Dataset}
+There are already some widely known datasets for text classification, such as the IMDB movie review dataset for sentiment analysis\cite{imdb_dataset} or datasets for various tasks in the UCI Machine Learning Repository\cite{UCI}. Nevertheless, we haven't found any publicly accessible dataset containing short text snippets of books. Therefore, we created a dataset out of the books available in Project Gutenberg. As the focus of our work is to recognize genres based on a short text, we cut several snippets out of each book of interest.
+
+\subsubsection{Genres}
+We rely on the \textit{subjects} tag in the Project Gutenberg metadata catalogue to determine genres of the books. After some cleaning (e.g. merging \textit{adventure} and \textit{adventure stories} together), we focused on texts belonging to one of the following genres:
+\begin{itemize}
+  \item adventure stories
+  \item biography
+  \item children literature
+  \item detective and mystery stories
+  \item drama
+  \item fantasy literature
+  \item historical fiction
+  \item love stories
+  \item philosophy and ethics
+  \item poetry
+  \item religion and mythology
+  \item science fiction
+  \item short stories
+  \item western stories
+\end{itemize}
+
+We selected $5602$ distinct Project Gutenberg books containing one of the above defined genres. We didn't choose books covering multiple genres as the majority of classifiers is suited for a single class predictions. Also we would have to use more complex metrics to compare multiclass classification models.
+
+Out of the $5602$ books, we sampled text snippets with the length of $3200$ characters. The whole dataset consisting of $225134$ documents was then split into train ($85\ \%$) and test set ($15\ \%$).
+
+The original book texts were first preprocessed to get rid of the Project Gutenberg header and footer. After that, another $10000$ characters were stripped out of the beginning and end of the book to avoid book contents, preface or glossary being part of the document. Sequences of whitespace characters were replaced by a single space character as long whitespace sequences would bloat the documents with non-meaningful symbols.
+
+Finally, in case the original book text was split in the middle of a word, the incomplete heading and trailing word of the document is discarded, which makes the documents slightly shorter than $3200$ characters.
+
+
+\subsubsection{Document size}
+As one of the main goals is to find out how much text is needed to distinguish a genre, we created two other datasets containing $800$ and $200$ characters long documents. The shorter datasets were created by taking first $n$ characters of the original dataset with $3200$ characters.\footnote{And again, discarding the last word in case the word was not complete.} These three document lengths approximately represent:
+\begin{itemize}
+  \item a snippet of few sentences ($200$ chars)
+  \item a paragraph ($800$ chars)
+  \item a couple of pages ($3200$ chars)
+\end{itemize}
+As the sizes are defined in characters and not words, the word count varies between documents.
+
+
+\section{Genre Classification}
+
+\begin{itemize}
+  \item mention different tokenizing approaches
+\end{itemize}
+
+\begin{comment}
+  For each document size, we explore three document representations. Bag of words creates a vector based on the occurrence of words in vocabulary, doc2vec approach encodes the document in a vector in several hundred dimensional space. Finally, we use GloVe word-embeddings as an input to the Convolutional Neural Network.
+\end{comment}
+
+\subsection{Bag of Words}
+First, we represent documents as bag of words. One of the drawbacks of BOW is that it creates vectors in highly-dimensional space. That might cause problems in training as the whole dataset might not fit into memory or it can take very long time until some classifiers, for example SVMs, converge.
+
+To see how many distinct words are needed in the BOW vector for a good prediction, we consider various vocabulary sizes from $1000$ to $50000$ words and compare performance of the classifiers for those.
+
+When creating vocabulary with size $n$, the $n$ most frequent words which occur in less than $50\ \%$ of the documents are chosen. At the same time, chosen words most appear at least in $5$ documents to be considered at all. Filtering of the frequent words is more or less equivalent to stop word exclusion. By filtering the low occurrence words, we make sure that words such as names very specific to a given book are not included in the dictionary.
+
+
+\subsubsection{Binary BOW}
+Algorithms:
+\begin{itemize}
+  \item Naive Bayes
+  \item Logistic Regression
+  \item Feed-Forward NN
+\end{itemize}
+
+\subsection{Doc2Vec Representation}
+We use the DBOW version of doc2vec algorithm. The parameter choice was inspired by \cite{doc2vec_params}, who ran grid search comparing various settings on a task with document sizes similar to ours.
+
+For the doc2vec representation, we compared following algorithms:
+\begin{itemize}
+  \item most similar genre vector
+  \item Gaussian Naive Bayes
+  \item Logistic Regression
+  \item Feed-forward NN
+  \item Annoy
+\end{itemize}

@@ -49,10 +49,20 @@
 \usepackage{dcolumn}        % improved alignment of table columns
 \usepackage{booktabs}       % improved horizontal lines in tables
 \usepackage{paralist}       % improved enumerate and itemize
-\usepackage[usenames]{xcolor}  % typesetting in color
+% \usepackage[usenames]{xcolor}  % typesetting in color
+% \usepackage{xcolor}
+\usepackage[table]{xcolor}
+\usepackage{verbatim}
+\usepackage[capitalise,noabbrev]{cleveref}
+
+
+
+\usepackage{caption}
+\usepackage{subcaption}
+
 
 %%% Basic information on the thesis
-
+ 
 % Thesis title in English (exactly as in the formal assignment)
 \def\ThesisTitle{Genres classification by means of machine learning}
 
@@ -117,12 +127,14 @@ Abstract.
 %\include{preface}
 \include{01_introduction}
 \include{02_background}
-\include{03_design}
-\include{04_evaluation}
-\include{05_implementation}
-\include{06_summary}
+\include{03_methodology}
+\include{04_exploration}
+\include{05_classification}
+\include{06_insights}
+\include{07_implementation}
+\include{08_summary}
 
-\include{epilog}
+%\include{epilog}
 
 %%% Bibliography
 \include{bibliography}
